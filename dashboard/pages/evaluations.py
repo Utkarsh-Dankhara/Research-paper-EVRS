@@ -164,7 +164,7 @@ with tab_metrics:
                 legend=dict(font=dict(size=11)),
                 xaxis_title="Epoch", yaxis_title="Huber loss",
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
         except ImportError:
             st.info("Install plotly for interactive training curves: `pip install plotly`")
 
@@ -181,7 +181,7 @@ with tab_compare:
                 df.style.highlight_min(subset=["mae","rmse"], color="#14532d")
                         .highlight_max(subset=["r2"], color="#14532d")
                         .format({"mae":"{:.4f}","rmse":"{:.4f}","r2":"{:.4f}"}),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
             )
         except Exception as e:
@@ -192,12 +192,12 @@ with tab_compare:
     if comparison_master.exists():
         st.markdown('<div class="section-label" style="margin-top:24px;">Master comparison figure</div>',
                     unsafe_allow_html=True)
-        st.image(str(comparison_master), use_container_width=True)
+        st.image(str(comparison_master), width="stretch")
 
     if comparison_grid.exists():
         st.markdown('<div class="section-label" style="margin-top:24px;">Per-model grid</div>',
                     unsafe_allow_html=True)
-        st.image(str(comparison_grid), use_container_width=True)
+        st.image(str(comparison_grid), width="stretch")
 
     if not comparison_csv.exists() and not comparison_master.exists():
         pass  # banner already shown above
@@ -336,7 +336,7 @@ with tab_bootstrap:
                     yaxis_title="Count",
                     showlegend=False,
                 )
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
             except ImportError:
                 st.info("Install plotly for the bootstrap histogram: `pip install plotly`")
 
