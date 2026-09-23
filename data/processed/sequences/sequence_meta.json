@@ -1,0 +1,26 @@
+{
+  "feature_cols": [
+    "length",
+    "sinuosity",
+    "lanes_estimated",
+    "avg_node_degree",
+    "speed_kph",
+    "travel_time",
+    "junction_count",
+    "betweenness_centrality",
+    "betweenness_centrality_pct_in_city",
+    "is_bridge",
+    "is_tunnel",
+    "is_roundabout",
+    "oneway",
+    "highway_motorway",
+    "highway_trunk",
+    "highway_primary",
+    "highway_secondary",
+    "highway_tertiary",
+    "highway_residential",
+    "highway_service",
+    "highway_unclassified",
+    "highway_other"
+  ]
+}

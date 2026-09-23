@@ -1,0 +1,28 @@
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.vscode/
+.DS_Store
+
+# generated pipeline outputs -- everything under these is reproducible via `python main.py`
+# The commented out files here, so that when using this repo from git the user will not need to run the whole project (6-10 hours) and save time by using the pre-generated files. If you want to re-generate the files, uncomment the lines below and run `python main.py`.
+logs/*.log
+# data/raw/graph_cache/*.graphml
+# data/processed/*.csv
+# data/processed/*.gpkg
+# data/processed/sequences/*
+data/routing/*
+# models/*/*.keras
+# models/*/*.joblib
+results/*/*.json
+# results/*/*.npz
+results/*/plots/*.png
+results/comparison/*
+# routes/maps/*.html
+routes/reliability/*.png
+
+# keep the folder skeleton in git even though its contents are ignored
+!**/.gitkeep
+
+# streamlit
+.streamlit/
