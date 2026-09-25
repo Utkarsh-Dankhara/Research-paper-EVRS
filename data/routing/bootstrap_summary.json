@@ -1,0 +1,10 @@
+{
+  "mean_reduction_pct": 42.579572957860954,
+  "std_reduction_pct": 17.31330851334693,
+  "ci_95_lo": 38.86376429283165,
+  "ci_95_hi": 46.02064079238314,
+  "p_positive": 1.0,
+  "significant": true,
+  "n_pairs": 90,
+  "n_bootstrap_samples": 5000
+}

@@ -22,6 +22,7 @@ picks one random OD pair per city and produces the full reliability
 visualization for it via src.routing.reliability.
 """
 import logging
+from datetime import datetime, timezone
 
 import networkx as nx
 import numpy as np
@@ -33,6 +34,83 @@ from src.routing.graph_utils import compute_city_centers, make_haversine, random
 from src.utils.io import ensure_project_dirs, load_json, output_exists
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# Live traffic (Mappls) -- routing-time adjustment, NOT a model feature
+# ============================================================
+# Traffic is fundamentally a live, fast-decaying signal (fresh for
+# MAPPLS_TRAFFIC_CACHE_TTL_HOURS, primary/secondary roads only), unlike
+# every other feature the models were trained on, which is a static road
+# property. Retraining the models on it would mean baking in a stale
+# snapshot rather than reflecting current conditions at request time.
+# Instead it's applied here, live, on top of the already-trained risk
+# scores -- one adjustment point that automatically reaches router.py's
+# own run(), src.routing.bootstrap, and dashboard/app.py, since all three
+# go through prepare_routing_graphs().
+
+def _is_fresh(entry: dict) -> bool:
+    """Same freshness check as src.data.mappls_traffic._is_fresh --
+    duplicated (not imported) since that module is a data-fetching CLI
+    tool and this is routing; keep them in sync if the TTL logic changes."""
+    fetched_at = datetime.fromisoformat(entry["fetched_at"])
+    age_hours = (datetime.now(timezone.utc) - fetched_at).total_seconds() / 3600
+    return age_hours < config.MAPPLS_TRAFFIC_CACHE_TTL_HOURS
+
+
+def apply_traffic_adjustment(graphs: dict, df_w: pd.DataFrame) -> pd.DataFrame:
+    """If config.ENABLE_TRAFFIC is True, multiplies travel_time (on graph
+    edges, in place -- this is what 'fastest' mode reads directly) and
+    bayesian_base_cost (in df_w, returned as a new DataFrame -- this is
+    what urgent/standard/cautious derive from) by the live congestion
+    factor, for any edge with a fresh cached reading from
+    src/data/mappls_traffic.py. Edges without a fresh reading (the vast
+    majority -- coverage is primary/secondary roads only) are left
+    untouched, i.e. an implicit factor of 1.0.
+
+    No-op (returns df_w unchanged) if ENABLE_TRAFFIC is False, or if no
+    cache file exists yet / has no fresh entries for any city -- run
+    `python -m src.data.mappls_traffic --city <code>` first.
+    """
+    if not config.ENABLE_TRAFFIC:
+        return df_w
+
+    df_w = df_w.copy()
+    factor_lookup = {}  # (city_code, osmid_local) -> congestion factor
+    total_fresh = 0
+
+    for city_code, G in graphs.items():
+        cache_path = config.RAW_DIR / "mappls_traffic_cache" / f"{city_code}.json"
+        if not output_exists(cache_path):
+            continue
+        cache = load_json(cache_path)
+        fresh = {osmid: entry["live_congestion_factor"]
+                 for osmid, entry in cache.items() if _is_fresh(entry)}
+        total_fresh += len(fresh)
+        for osmid, factor in fresh.items():
+            factor_lookup[(city_code, osmid)] = factor
+
+        matched = 0
+        for u, v, key, data in G.edges(keys=True, data=True):
+            eid = data.get("osmid", "")
+            eid = str(eid[0]) if isinstance(eid, list) else str(eid)
+            if eid in fresh and "travel_time" in data:
+                data["travel_time"] = data["travel_time"] * fresh[eid]
+                matched += 1
+        if matched:
+            logger.info(f"[{city_code}] traffic: adjusted travel_time on {matched} graph edges")
+
+    if not factor_lookup:
+        logger.info("Traffic: ENABLE_TRAFFIC=True but no fresh cached readings found for any "
+                    "city -- no adjustment applied. Run src.data.mappls_traffic first.")
+        return df_w
+
+    keys = list(zip(df_w["city_code"], df_w["osmid_local"].astype(str)))
+    factors = pd.Series([factor_lookup.get(k, 1.0) for k in keys], index=df_w.index)
+    df_w["bayesian_base_cost"] = df_w["bayesian_base_cost"] * factors
+    logger.info(f"Traffic: {total_fresh} fresh readings applied across {len(graphs)} cities "
+                f"({int((factors != 1.0).sum())} routing-map rows adjusted)")
+    return df_w
 
 
 # ============================================================
@@ -146,6 +224,7 @@ def prepare_routing_graphs(force: bool = False):
 
     fallback = load_json(fallback_path)
     graphs = load_city_graphs(force_refresh=force)
+    df_w = apply_traffic_adjustment(graphs, df_w)  # no-op unless ENABLE_TRAFFIC=True and fresh cache exists
 
     alphas = compute_alphas(df_w)
     inject_all_weights(graphs, df_w, alphas, fallback["by_highway"], fallback["global"])

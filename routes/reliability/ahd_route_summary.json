@@ -1,36 +1,36 @@
 {
   "city": "ahd",
   "od_label": "Random pair in AHD (24.0 km apart)",
-  "total_segments": 241,
-  "high_confidence_segments": 204,
-  "mid_confidence_segments": 37,
+  "total_segments": 245,
+  "high_confidence_segments": 234,
+  "mid_confidence_segments": 11,
   "low_confidence_segments": 0,
-  "mean_reliability_pct": 86.73312318266629,
-  "eta_point_estimate_sec": 3283.68825385154,
-  "eta_point_estimate_fmt": "54m 43s",
-  "eta_sigma_sec": 20.20248829083381,
-  "ci_50_lo_fmt": "54m 30s",
-  "ci_50_hi_fmt": "54m 57s",
-  "ci_95_lo_fmt": "54m 04s",
-  "ci_95_hi_fmt": "55m 23s",
+  "mean_reliability_pct": 86.03641154723765,
+  "eta_point_estimate_sec": 3317.942149226547,
+  "eta_point_estimate_fmt": "55m 17s",
+  "eta_sigma_sec": 3.2103491995280966,
+  "ci_50_lo_fmt": "55m 15s",
+  "ci_50_hi_fmt": "55m 20s",
+  "ci_95_lo_fmt": "55m 11s",
+  "ci_95_hi_fmt": "55m 24s",
   "weakest_segments": [
     {
+      "osmid_str": "1195522554",
+      "uncertainty": 0.0129386063862683,
+      "reliability": 0.6326867944389286,
+      "length": 266.61573179110366
+    },
+    {
+      "osmid_str": "326738617",
+      "uncertainty": 0.0082516643144955,
+      "reliability": 0.7657440701041826,
+      "length": 5.746126450292408
+    },
+    {
       "osmid_str": "171223942",
-      "uncertainty": 0.0431207903412486,
-      "reliability": 0.7127113573920397,
+      "uncertainty": 0.0072766340748937,
+      "reliability": 0.7934241364216192,
       "length": 344.4424022581058
-    },
-    {
-      "osmid_str": "171223942",
-      "uncertainty": 0.0431207903412486,
-      "reliability": 0.7127113573920397,
-      "length": 81.96935559605542
-    },
-    {
-      "osmid_str": "171223942",
-      "uncertainty": 0.0431207903412486,
-      "reliability": 0.7127113573920397,
-      "length": 370.82671704561085
     }
   ]
 }

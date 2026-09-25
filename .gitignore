@@ -4,6 +4,12 @@ __pycache__/
 .vscode/
 .DS_Store
 
+# NEVER commit real credentials -- .env holds the actual Mappls keys.
+# .env.example (tracked) shows the required variable names with no real values.
+.env
+.env.*
+!.env.example
+
 # generated pipeline outputs -- everything under these is reproducible via `python main.py`
 # The commented out files here, so that when using this repo from git the user will not need to run the whole project (6-10 hours) and save time by using the pre-generated files. If you want to re-generate the files, uncomment the lines below and run `python main.py`.
 logs/*.log
@@ -11,15 +17,15 @@ logs/*.log
 # data/processed/*.csv
 # data/processed/*.gpkg
 # data/processed/sequences/*
-data/routing/*
+# data/routing/*
 # models/*/*.keras
 # models/*/*.joblib
-results/*/*.json
+# results/*/*.json
 # results/*/*.npz
-results/*/plots/*.png
-results/comparison/*
+# results/*/plots/*.png
+# results/comparison/*
 # routes/maps/*.html
-routes/reliability/*.png
+# routes/reliability/*.png
 
 # keep the folder skeleton in git even though its contents are ignored
 !**/.gitkeep

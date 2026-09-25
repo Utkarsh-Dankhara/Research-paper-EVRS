@@ -27,28 +27,31 @@ built from per-city rank/percentile normalization of structurally-
 grounded factors, clipped to `[0,1]`, with no direct 1:1 overlap with the
 raw feature columns.
 
-## ⚠️ Known pending fix — retrain the BiLSTM before trusting its output
+## ✅ Resolved — BiLSTM sigmoid/scaling bug (was: R²=0.60, now: R²=0.9929)
 
-`models/bayesian_bilstm/model.keras` (and everything derived from it —
-`data/routing/bayesian_routing_map.csv`, the bootstrap results, the
-routing maps) as currently committed reflects a **known bug**: the
-model's final layer used `activation="sigmoid"` while being trained
-against `RobustScaler`-transformed targets, which aren't bounded to
-`[0,1]` (roughly half land as negative numbers a sigmoid can never
-reach). Result: predictions collapsed to two flat plateaus, R²=0.60,
-vs. 0.92–0.99 for the other 4 models on the identical target. Fixed in
-code (`activation="linear"`, matching `vanilla_lstm.py`/`transformer.py`
-which use the same target scaling correctly) but **not yet retrained**
-as of this commit. Before trusting the BiLSTM, its routing map, or the
-bootstrap risk-reduction numbers, run:
+`models/bayesian_bilstm/model.keras` previously had a bug: its final
+layer used `activation="sigmoid"` while being trained against
+`RobustScaler`-transformed targets, which aren't bounded to `[0,1]`
+(roughly half land as negative numbers a sigmoid can never reach).
+Result: predictions collapsed to two flat plateaus, R²=0.60, vs.
+0.92–0.99 for the other 4 models on the identical target.
 
-```bash
-python main.py --stage train --models bilstm --force
-python main.py --stage route --force
-```
+Fixed by switching to `activation="linear"` (matching
+`vanilla_lstm.py`/`transformer.py`, which use the same target scaling
+correctly) and retraining. Confirmed in `results/bayesian_bilstm/metrics.json`:
+**MAE=0.0046, RMSE=0.0097, R²=0.9929** — now the best of all 5 models on
+every metric (previously XGBoost led; see the note on `comparison_summary.json`
+staleness below). The routing map, bootstrap results, and route maps
+were regenerated from the corrected model and reflect this fix.
 
-RF, XGBoost, Vanilla LSTM, and Transformer are unaffected — this is
-specific to the BiLSTM's output layer.
+If you retrain the BiLSTM again in the future for any reason, rerun
+`python main.py --stage compare` afterward too --
+`results/comparison/comparison_summary.json` only updates when that
+stage runs, so it can silently go stale relative to a fresher
+`metrics.json` the way it briefly did here.
+
+RF, XGBoost, Vanilla LSTM, and Transformer were never affected by this
+bug — it was specific to the BiLSTM's output layer.
 
 ## Session fixes (2026-09) — feature-count mismatch, early stopping, mixed precision, logging, sigmoid/scaling bug
 

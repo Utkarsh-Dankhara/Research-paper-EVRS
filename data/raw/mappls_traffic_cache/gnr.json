@@ -1,0 +1,9 @@
+{
+  "326057157": {
+    "highway": "secondary",
+    "baseline_duration_s": 11.3,
+    "traffic_duration_s": 12.0,
+    "live_congestion_factor": 1.0619469026548671,
+    "fetched_at": "2026-09-25T10:28:01.122758+00:00"
+  }
+}

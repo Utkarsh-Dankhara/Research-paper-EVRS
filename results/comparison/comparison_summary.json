@@ -1,0 +1,13 @@
+{
+  "available_models": [
+    "random_forest",
+    "xgboost",
+    "vanilla_lstm",
+    "transformer",
+    "bayesian_bilstm"
+  ],
+  "missing_models": [],
+  "best_mae_model": "bayesian_bilstm",
+  "best_rmse_model": "bayesian_bilstm",
+  "best_r2_model": "bayesian_bilstm"
+}
