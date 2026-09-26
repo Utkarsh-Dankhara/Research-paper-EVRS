@@ -1,8 +1,8 @@
 {
   "n_routes_timed": 90,
-  "mean_ms": 1213.5190698835586,
-  "median_ms": 1237.9730939865112,
-  "p95_ms": 2591.141712665557,
-  "max_ms": 4594.279766082764,
+  "mean_ms": 1320.44218911065,
+  "median_ms": 1273.923635482788,
+  "p95_ms": 2898.7786769866943,
+  "max_ms": 3276.371717453003,
   "note": "Time to compute all 5 route modes (baseline/fastest/urgent/standard/cautious) for one origin-destination pair, using the already-trained model and the already-built routing map (data/routing/bayesian_routing_map.csv). Does NOT include model training or the one-time full-graph MC-Dropout inference that builds the routing map -- those happen once, offline, not per route request."
 }

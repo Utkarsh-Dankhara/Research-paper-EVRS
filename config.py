@@ -6,6 +6,9 @@ lives here, ported from both original notebooks. Nothing downstream
 should hardcode a path or a magic number that's already defined here.
 """
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
 
 # ============================================================
 # Paths
@@ -279,3 +282,19 @@ RISK_V2_WEIGHTS = {
     "centrality": 0.15,
     "length":     0.10,
 }
+
+
+# ============================================================
+# Carto basemap
+# ============================================================
+
+load_dotenv()  # looks for .env in cwd by default
+
+CARTO_API_KEY = os.environ.get("CARTO_API_KEY", "")
+
+CARTO_API_KEY = os.environ.get("CARTO_API_KEY", "")  # or hardcode for local dev
+print(f"[DEBUG] CARTO_API_KEY loaded: {repr(CARTO_API_KEY)}")
+CARTO_TILE_URL = (
+    "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=" + CARTO_API_KEY
+)
+CARTO_ATTR = '&copy; <a href="https://carto.com/">CARTO</a>'

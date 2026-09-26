@@ -1,8 +1,8 @@
 {
-  "mean_reduction_pct": 42.579572957860954,
-  "std_reduction_pct": 17.31330851334693,
-  "ci_95_lo": 38.86376429283165,
-  "ci_95_hi": 46.02064079238314,
+  "mean_reduction_pct": 42.579576012776116,
+  "std_reduction_pct": 17.31330913390161,
+  "ci_95_lo": 38.86376654163851,
+  "ci_95_hi": 46.02064335684533,
   "p_positive": 1.0,
   "significant": true,
   "n_pairs": 90,

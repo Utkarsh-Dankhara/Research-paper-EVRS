@@ -104,7 +104,12 @@ else:
     if st.sidebar.button("Reset selection"):
         _reset_od_state(); stage = "start"
 
-    pick_map = folium.Map(location=list(center), zoom_start=13, tiles="cartodbpositron")
+    pick_map = folium.Map(
+        location=list(center),
+        zoom_start=13,
+        tiles=config.CARTO_TILE_URL,
+        attr=config.CARTO_ATTR,
+    )
     if st.session_state.get("click_start"):
         folium.Marker(st.session_state.click_start, tooltip="Origin",
                       icon=folium.Icon(color="green", icon="ambulance", prefix="fa")).add_to(pick_map)

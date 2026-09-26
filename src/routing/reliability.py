@@ -306,7 +306,12 @@ def build_combined_map(route_result, edges_std, city_center, start, end, od_labe
     labels = _route_labels(alphas)
     default_on = {"baseline", "standard"}
 
-    fmap = folium.Map(location=list(city_center), zoom_start=14, tiles="cartodbpositron")
+    fmap = folium.Map(
+        location=list(city_center),
+        zoom_start=14,
+        tiles=config.CARTO_TILE_URL,
+        attr=config.CARTO_ATTR,
+    )
 
     for mode in ["baseline", "fastest", "urgent", "cautious", "standard"]:
         if mode not in route_result:
@@ -332,7 +337,12 @@ def build_reliability_only_map(route_result, edges_std, city_center, start, end,
     original notebook's {city}_route_reliability.html."""
     labels = _route_labels(alphas)
 
-    fmap = folium.Map(location=list(city_center), zoom_start=14, tiles="cartodbpositron")
+    fmap = folium.Map(
+        location=list(city_center),
+        zoom_start=14,
+        tiles=config.CARTO_TILE_URL,
+        attr=config.CARTO_ATTR,
+    )
     for mode, style in OTHER_ROUTE_STYLES.items():
         if mode not in route_result:
             continue
