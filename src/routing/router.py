@@ -75,6 +75,23 @@ def apply_traffic_adjustment(graphs: dict, df_w: pd.DataFrame) -> pd.DataFrame:
     if not config.ENABLE_TRAFFIC:
         return df_w
 
+    if config.MAPPLS_AUTO_REFRESH_LIMIT > 0:
+        # reuse mappls_traffic.run() directly rather than duplicating its
+        # fetch/cache logic -- it's already TTL-aware (skips anything
+        # still fresh), so calling this on every prepare_routing_graphs()
+        # is cheap once data for a city is warm, not a repeated cost.
+        from src.data.mappls_traffic import run as fetch_traffic
+        for city_code in graphs:
+            try:
+                fetch_traffic(city_code, config.CITIES[city_code],
+                               limit=config.MAPPLS_AUTO_REFRESH_LIMIT,
+                               dry_run=False, force_refetch=False)
+            except Exception as exc:
+                # a network hiccup or credential issue here should degrade
+                # to "route without fresh traffic," not break routing
+                logger.warning(f"[{city_code}] traffic auto-refresh failed, "
+                                f"continuing with whatever's already cached: {exc}")
+
     df_w = df_w.copy()
     factor_lookup = {}  # (city_code, osmid_local) -> congestion factor
     total_fresh = 0

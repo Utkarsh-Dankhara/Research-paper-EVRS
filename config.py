@@ -104,7 +104,7 @@ BETWEENNESS_SAMPLE_K = 500
 
 ADD_ELEVATION = False
 ENABLE_ACCIDENTS = False
-ENABLE_TRAFFIC = True
+ENABLE_TRAFFIC = False
 ENABLE_ZONES = False
 ENABLE_WEATHER = False
 
@@ -259,6 +259,14 @@ N_BOOTSTRAP_SAMPLES = 5000
 MAPPLS_TRAFFIC_CACHE_TTL_HOURS = 6
 MAPPLS_TRAFFIC_HIGHWAY_TYPES = ["primary", "secondary"]
 MAPPLS_DISTANCE_MATRIX_MAX_POINTS = 100
+# 0 = disabled (default, safe -- routing only reads whatever's already
+# cached, never fetches on its own). Set to a small positive number
+# (e.g. 20) to have prepare_routing_graphs() auto-refresh up to that many
+# stale/missing segments per city before routing. Safe to leave on:
+# mappls_traffic.run() is TTL-aware and skips anything still fresh, and
+# ENABLE_TRAFFIC=True + this both being set is required for either the
+# refresh or the adjustment to do anything.
+MAPPLS_AUTO_REFRESH_LIMIT = 0
 
 # ============================================================
 # risk_score_v2 component weights (src/data/risk_v2.py)
